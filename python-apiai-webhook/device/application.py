@@ -13,12 +13,20 @@ import os
 import thread
 import server
 
+currentRed = 0;
+currentGreen = 0;
+currentBlue = 0;
+
 from ioant.sdk import IOAnt
 import logging
 import hashlib
 logger = logging.getLogger(__name__)
 
 def intent_request(req):
+    global currentRed
+    global currentGreen
+    global currentBlue
+
     """ Handles and responds on webhook request from API.ai """
     action = req.get("result").get("action")
     print("request ioant action:", action)
@@ -32,15 +40,82 @@ def intent_request(req):
 
     if action == "rgb.set":
         color = req.get("result").get("parameters").get("color")
-        pwm = req.get("result").get("parameters").get("pwm")
+        pwm = int(req.get("result").get("parameters").get("pwm"))
+        if pwm > 255:
+            pwm = 255;
+        if pwm < 0:
+            pwm = 0;
         action_text = "rgb set"
         msg = ioant.create_message("Color")
         if color == "red":
             msg.red = pwm
+            currentRed = pwm
         if color == "green":
             msg.green = pwm
+            currentGreen = pwm
         if color == "blue":
             msg.blue = pwm
+            currentBlue = pwm
+        ioant.publish(msg,topic)
+    elif action == "rgb.increase":
+        color = req.get("result").get("parameters").get("color")
+        pwm = int(req.get("result").get("parameters").get("pwm"))
+        action_text = "rgb increase"
+        msg = ioant.create_message("Color")
+        if color == "red":
+            itemp = currentRed + pwm
+            if itemp > 255:
+                itemp = 255;
+            if itemp < 0:
+                itemp = 0;
+            currentRed = itemp
+            msg.red = itemp
+        if color == "green":
+            itemp = currentGreen + pwm
+            if itemp > 255:
+                itemp = 255;
+            if itemp < 0:
+                itemp = 0;
+            currentGreen = itemp
+            msg.green = itemp
+        if color == "blue":
+            itemp = currentBlue + pwm
+            if itemp > 255:
+                itemp = 255;
+            if itemp < 0:
+                itemp = 0;
+            currentBlue = itemp
+            msg.blue = itemp
+        ioant.publish(msg,topic)
+    elif action == "rgb.decrease":
+        color = req.get("result").get("parameters").get("color")
+        pwm = int(req.get("result").get("parameters").get("pwm"))
+        action_text = "rgb decrease"
+        msg = ioant.create_message("Color")
+        if color == "red":
+            itemp = currentRed - pwm
+            if itemp > 255:
+                itemp = 255;
+            if itemp < 0:
+                itemp = 0;
+            currentRed = itemp
+            msg.red = itemp
+        if color == "green":
+            itemp = currentGreen - pwm
+            if itemp > 255:
+                itemp = 255;
+            if itemp < 0:
+                itemp = 0;
+            currentGreen = itemp
+            msg.green = itemp
+        if color == "blue":
+            itemp = currentBlue - pwm
+            if itemp > 255:
+                itemp = 255;
+            if itemp < 0:
+                itemp = 0;
+            currentBlue = itemp
+            msg.blue = itemp
         ioant.publish(msg,topic)
     else:
         return {}
