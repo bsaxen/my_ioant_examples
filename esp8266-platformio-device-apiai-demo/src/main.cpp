@@ -65,19 +65,19 @@ void on_message(Ioant::Topic received_topic, ProtoIO* message){
         ColorMessage *msg = static_cast<ColorMessage*>(message);
         if(msg->data.red > 0)
         {
-           ULOG_DEBUG << "red ";
+           ULOG_DEBUG << "red " << String(msg->data.red);
            currentRed = msg->data.red;
            //analogWrite(red,HIGH);
         }
         if (msg->data.green > 0)
         {
-           ULOG_DEBUG << "green ";
+           ULOG_DEBUG << "green " << String(msg->data.green);
            currentGreen = msg->data.green;
            //analogWrite(green,HIGH);
         }
         if (msg->data.blue > 0)
         {
-           ULOG_DEBUG << "blue ";
+           ULOG_DEBUG << "blue " << String(msg->data.blue);
            currentBlue = msg->data.blue;
            //analogWrite(blue,HIGH);
         }
