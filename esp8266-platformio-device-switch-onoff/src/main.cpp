@@ -21,12 +21,13 @@ void on_message(Ioant::Topic received_topic, ProtoIO* message);
 // ############################################################################
 // Everything above this line is mandatory
 // ############################################################################
+int onOffPin = 5; // D1
 
 void setup(void){
     //Initialize
     Ioant::GetInstance(on_message);
-    //pinMode(DIR,OUTPUT);
-    //digitalWrite(MS1,LOW);
+    pinMode(onOffPin,OUTPUT);
+    digitalWrite(onOffPin,LOW);
 
     //Subscribe switch message
     Ioant::Topic subscribe_topic = IOANT->GetConfiguredTopic();
@@ -49,10 +50,12 @@ void on_message(Ioant::Topic received_topic, ProtoIO* message){
         if(msg->data.state == false)
          {
            ULOG_DEBUG << "Set Status to OFF";
+           digitalWrite(onOffPin,LOW);
          }
          else if (msg->data.state == true)
          {
            ULOG_DEBUG << "Set Status to ON";
+           digitalWrite(onOffPin,HIGH);
          }
          else
          {
