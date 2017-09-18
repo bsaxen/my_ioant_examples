@@ -58,7 +58,7 @@ def intent_request(req):
         
         msg.red = currentRed
         msg.green = currentGreen
-        msg.blue = currentGreen    
+        msg.blue = currentBlue    
         #action_text = "set rgb " + color + " to " + str(pwm)
         action_text = "set rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
         ioant.publish(msg,topic)
@@ -70,7 +70,7 @@ def intent_request(req):
         
         msg.red = currentRed
         msg.green = currentGreen
-        msg.blue = currentGreen    
+        msg.blue = currentBlue    
         #action_text = "set rgb " + color + " to " + str(pwm)
         action_text = "zero rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
         ioant.publish(msg,topic)
@@ -82,7 +82,7 @@ def intent_request(req):
         
         msg.red = currentRed
         msg.green = currentGreen
-        msg.blue = currentGreen    
+        msg.blue = currentBlue    
         #action_text = "set rgb " + color + " to " + str(pwm)
         action_text = "max rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
         ioant.publish(msg,topic)
@@ -115,7 +115,7 @@ def intent_request(req):
             
         msg.red = currentRed
         msg.green = currentGreen
-        msg.blue = currentGreen    
+        msg.blue = currentBlue    
         action_text = "increase rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
         ioant.publish(msg,topic)
     elif action == "rgb.decrease":
@@ -147,7 +147,7 @@ def intent_request(req):
             
         msg.red = currentRed
         msg.green = currentGreen
-        msg.blue = currentGreen    
+        msg.blue = currentBlue    
         action_text = "decrease rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
         ioant.publish(msg,topic)
     else:
