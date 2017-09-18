@@ -13,9 +13,9 @@ import os
 import thread
 import server
 
-currentRed = 0;
-currentGreen = 0;
-currentBlue = 0;
+currentRed = 1;
+currentGreen = 1;
+currentBlue = 1;
 pwm_max = 1023;
 
 from ioant.sdk import IOAnt
@@ -44,8 +44,8 @@ def intent_request(req):
         pwm = int(req.get("result").get("parameters").get("pwm"))
         if pwm > pwm_max:
             pwm = pwm_max
-        if pwm < 0:
-            pwm = 0
+        if pwm < 1:
+            pwm = 1
         
         msg = ioant.create_message("Color")
         if color == "red":
@@ -70,24 +70,24 @@ def intent_request(req):
             itemp = currentRed + pwm
             if itemp > pwm_max:
                 itemp = pwm_max
-            if itemp < 0:
-                itemp = 0
+            if itemp < 1:
+                itemp = 1
             currentRed = itemp
             msg.red = itemp
         if color == "green":
             itemp = currentGreen + pwm
             if itemp > pwm_max:
                 itemp = pwm_max
-            if itemp < 0:
-                itemp = 0
+            if itemp < 1:
+                itemp = 1
             currentGreen = itemp
             msg.green = itemp
         if color == "blue":
             itemp = currentBlue + pwm
             if itemp > pwm_max:
                 itemp = pwm_max
-            if itemp < 0:
-                itemp = 0
+            if itemp < 1:
+                itemp = 1
             currentBlue = itemp
             msg.blue = itemp
         action_text = "increase rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
@@ -101,24 +101,24 @@ def intent_request(req):
             itemp = currentRed - pwm
             if itemp > pwm_max:
                 itemp = pwm_max
-            if itemp < 0:
-                itemp = 0
+            if itemp < 1:
+                itemp = 1
             currentRed = itemp
             msg.red = itemp
         if color == "green":
             itemp = currentGreen - pwm
             if itemp > pwm_max:
                 itemp = pwm_max
-            if itemp < 0:
-                itemp = 0
+            if itemp < 1:
+                itemp = 1
             currentGreen = itemp
             msg.green = itemp
         if color == "blue":
             itemp = currentBlue - pwm
             if itemp > pwm_max:
                 itemp = pwm_max
-            if itemp < 0:
-                itemp = 0
+            if itemp < 1:
+                itemp = 1
             currentBlue = itemp
             msg.blue = itemp
         action_text = "decrease rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
