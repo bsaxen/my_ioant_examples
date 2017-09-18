@@ -61,6 +61,22 @@ def intent_request(req):
         #action_text = "set rgb " + color + " to " + str(pwm)
         action_text = "set rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
         ioant.publish(msg,topic)
+    elif action == "rgb.zero":
+        msg = ioant.create_message("Color")
+        msg.red = 1
+        msg.green = 1
+        msg.blue = 1   
+        #action_text = "set rgb " + color + " to " + str(pwm)
+        action_text = "zero rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
+        ioant.publish(msg,topic)
+    elif action == "rgb.max":
+        msg = ioant.create_message("Color")
+        msg.red = pwm_max
+        msg.green = pwm_max
+        msg.blue = pwm_max   
+        #action_text = "set rgb " + color + " to " + str(pwm)
+        action_text = "max rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
+        ioant.publish(msg,topic)
     elif action == "rgb.increase":
         color = req.get("result").get("parameters").get("color")
         pwm = int(req.get("result").get("parameters").get("pwm"))
