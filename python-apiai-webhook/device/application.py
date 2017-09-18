@@ -46,7 +46,7 @@ def intent_request(req):
             pwm = pwm_max
         if pwm < 0:
             pwm = 0
-        action_text = "set rgb " + color + " to " + str(pwm)
+        
         msg = ioant.create_message("Color")
         if color == "red":
             msg.red = pwm
@@ -57,11 +57,14 @@ def intent_request(req):
         if color == "blue":
             msg.blue = pwm
             currentBlue = pwm
+            
+        #action_text = "set rgb " + color + " to " + str(pwm)
+        action_text = "set rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
         ioant.publish(msg,topic)
     elif action == "rgb.increase":
         color = req.get("result").get("parameters").get("color")
         pwm = int(req.get("result").get("parameters").get("pwm"))
-        action_text = "rgb increase " + color + " with " + str(pwm)
+        #action_text = "rgb increase " + color + " with " + str(pwm)
         msg = ioant.create_message("Color")
         if color == "red":
             itemp = currentRed + pwm
@@ -87,11 +90,12 @@ def intent_request(req):
                 itemp = 0
             currentBlue = itemp
             msg.blue = itemp
+        action_text = "increase rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
         ioant.publish(msg,topic)
     elif action == "rgb.decrease":
         color = req.get("result").get("parameters").get("color")
         pwm = int(req.get("result").get("parameters").get("pwm"))
-        action_text = "rgb decrease " + color + " with " + str(pwm)
+        #action_text = "rgb decrease " + color + " with " + str(pwm)
         msg = ioant.create_message("Color")
         if color == "red":
             itemp = currentRed - pwm
@@ -117,6 +121,7 @@ def intent_request(req):
                 itemp = 0
             currentBlue = itemp
             msg.blue = itemp
+        action_text = "decrease rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
         ioant.publish(msg,topic)
     else:
         return {}
