@@ -1,6 +1,6 @@
 # =============================================
 # Benny Saxen
-# Date: 2017-09-17
+# Date: 2017-09-19
 # Description: API.ai webhook example with IOAnt support
 # =============================================
 
@@ -45,7 +45,7 @@ def intent_request(req):
             pwm = 255;
         if pwm < 0:
             pwm = 0;
-        action_text = "rgb set"
+        action_text = "set rgb " + color + " to " + str(pwm)
         msg = ioant.create_message("Color")
         if color == "red":
             msg.red = pwm
@@ -60,7 +60,7 @@ def intent_request(req):
     elif action == "rgb.increase":
         color = req.get("result").get("parameters").get("color")
         pwm = int(req.get("result").get("parameters").get("pwm"))
-        action_text = "rgb increase"
+        action_text = "rgb increase " + color + " with " + str(pwm)
         msg = ioant.create_message("Color")
         if color == "red":
             itemp = currentRed + pwm
@@ -90,7 +90,7 @@ def intent_request(req):
     elif action == "rgb.decrease":
         color = req.get("result").get("parameters").get("color")
         pwm = int(req.get("result").get("parameters").get("pwm"))
-        action_text = "rgb decrease"
+        action_text = "rgb decrease " + color + " with " + str(pwm)
         msg = ioant.create_message("Color")
         if color == "red":
             itemp = currentRed - pwm
