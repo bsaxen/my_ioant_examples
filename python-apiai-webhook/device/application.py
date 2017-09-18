@@ -42,9 +42,9 @@ def intent_request(req):
         color = req.get("result").get("parameters").get("color")
         pwm = int(req.get("result").get("parameters").get("pwm"))
         if pwm > 255:
-            pwm = 255;
+            pwm = 255
         if pwm < 0:
-            pwm = 0;
+            pwm = 0
         action_text = "set rgb " + color + " to " + str(pwm)
         msg = ioant.create_message("Color")
         if color == "red":
@@ -65,25 +65,25 @@ def intent_request(req):
         if color == "red":
             itemp = currentRed + pwm
             if itemp > 255:
-                itemp = 255;
+                itemp = 255
             if itemp < 0:
-                itemp = 0;
+                itemp = 0
             currentRed = itemp
             msg.red = itemp
         if color == "green":
             itemp = currentGreen + pwm
             if itemp > 255:
-                itemp = 255;
+                itemp = 255
             if itemp < 0:
-                itemp = 0;
+                itemp = 0
             currentGreen = itemp
             msg.green = itemp
         if color == "blue":
             itemp = currentBlue + pwm
             if itemp > 255:
-                itemp = 255;
+                itemp = 255
             if itemp < 0:
-                itemp = 0;
+                itemp = 0
             currentBlue = itemp
             msg.blue = itemp
         ioant.publish(msg,topic)
@@ -95,25 +95,25 @@ def intent_request(req):
         if color == "red":
             itemp = currentRed - pwm
             if itemp > 255:
-                itemp = 255;
+                itemp = 255
             if itemp < 0:
-                itemp = 0;
+                itemp = 0
             currentRed = itemp
             msg.red = itemp
         if color == "green":
             itemp = currentGreen - pwm
             if itemp > 255:
-                itemp = 255;
+                itemp = 255
             if itemp < 0:
-                itemp = 0;
+                itemp = 0
             currentGreen = itemp
             msg.green = itemp
         if color == "blue":
             itemp = currentBlue - pwm
             if itemp > 255:
-                itemp = 255;
+                itemp = 255
             if itemp < 0:
-                itemp = 0;
+                itemp = 0
             currentBlue = itemp
             msg.blue = itemp
         ioant.publish(msg,topic)
