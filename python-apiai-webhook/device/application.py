@@ -41,26 +41,36 @@ def intent_request(req):
 #----------------------------------------------------
     if action == "heater.incease":
 #----------------------------------------------------
+        steps = req.get("result").get("parameters").get("steps")
+        if steps < 1:
+            steps = 1
+        if steps > 20:
+            steps = 20
         topic['global'] = "kil"
         topic['local'] =  "kvv32"
         topic['client_id'] =  "D1"
         msg = ioant.create_message("RunStepperMotorRaw")
         msg.direction = COUNTER_CLOCKWISE
         msg.delay_between_steps = 5
-        msg.number_of_step = 20
+        msg.number_of_step = steps
         msg.step_size = FULL_STEP
         action_text = "Warmer " + str(msg.number_of_steps)
         ioant.publish(msg,topic)
 #----------------------------------------------------
     elif action == "heater.decease":
 #----------------------------------------------------
+        steps = req.get("result").get("parameters").get("steps")
+        if steps < 1:
+            steps = 1
+        if steps > 20:
+            steps = 20
         topic['global'] = "kil"
         topic['local'] =  "kvv32"
         topic['client_id'] =  "D1"
         msg = ioant.create_message("RunStepperMotorRaw")
         msg.direction = CLOCKWISE
         msg.delay_between_steps = 5
-        msg.number_of_step = 20
+        msg.number_of_step = steps
         msg.step_size = FULL_STEP
         action_text = "Cooler " + str(msg.number_of_steps)
         ioant.publish(msg,topic)
