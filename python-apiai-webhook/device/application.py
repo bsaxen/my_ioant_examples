@@ -54,7 +54,7 @@ def intent_request(req):
         msg.delay_between_steps = 5
         msg.number_of_step = steps
         msg.step_size = 0 #FULL_STEP
-        action_text = "Warmer " + str(msg.number_of_steps)
+        action_text = "Warmer " + str(msg.number_of_step)
         ioant.publish(msg,topic)
 #----------------------------------------------------
     elif action == "heater.decrease":
@@ -72,7 +72,7 @@ def intent_request(req):
         msg.delay_between_steps = 5
         msg.number_of_step = steps
         msg.step_size = 0 #FULL_STEP
-        action_text = "Cooler " + str(msg.number_of_steps)
+        action_text = "Cooler " + str(msg.number_of_step)
         ioant.publish(msg,topic)
 #----------------------------------------------------
     elif action == "rgb.set":
