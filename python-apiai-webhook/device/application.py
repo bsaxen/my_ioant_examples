@@ -41,7 +41,7 @@ def intent_request(req):
 #----------------------------------------------------
     if action == "heater.increase":
 #----------------------------------------------------
-        steps = req.get("result").get("parameters").get("steps")
+        steps = int(req.get("result").get("parameters").get("steps"))
         if steps < 1:
             steps = 1
         if steps > 20:
@@ -59,7 +59,7 @@ def intent_request(req):
 #----------------------------------------------------
     elif action == "heater.decrease":
 #----------------------------------------------------
-        steps = req.get("result").get("parameters").get("steps")
+        steps = int(req.get("result").get("parameters").get("steps"))
         if steps < 1:
             steps = 1
         if steps > 20:
