@@ -41,7 +41,7 @@ def intent_request(req):
 #----------------------------------------------------
     if action == "heater.incease":
 #----------------------------------------------------
-        topic['global'] = "kil
+        topic['global'] = "kil"
         topic['local'] =  "kvv32"
         topic['client_id'] =  "D1"
         msg = ioant.create_message("RunStepperMotorRaw")
@@ -54,7 +54,7 @@ def intent_request(req):
 #----------------------------------------------------
     elif action == "heater.decease":
 #----------------------------------------------------
-        topic['global'] = "kil
+        topic['global'] = "kil"
         topic['local'] =  "kvv32"
         topic['client_id'] =  "D1"
         msg = ioant.create_message("RunStepperMotorRaw")
