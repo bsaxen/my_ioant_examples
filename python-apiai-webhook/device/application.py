@@ -50,10 +50,10 @@ def intent_request(req):
         topic['local'] =  "kvv32"
         topic['client_id'] =  "D1"
         msg = ioant.create_message("RunStepperMotorRaw")
-        msg.direction = 1 #COUNTER_CLOCKWISE
+        msg.direction = msg.COUNTER_CLOCKWISE
         msg.delay_between_steps = 5
         msg.number_of_step = steps
-        msg.step_size = 0 #FULL_STEP
+        msg.step_size = msg.FULL_STEP
         action_text = "Warmer " + str(msg.number_of_step)
         ioant.publish(msg,topic)
 #----------------------------------------------------
@@ -68,10 +68,10 @@ def intent_request(req):
         topic['local'] =  "kvv32"
         topic['client_id'] =  "D1"
         msg = ioant.create_message("RunStepperMotorRaw")
-        msg.direction = 0 #CLOCKWISE
+        msg.direction = msgself.CLOCKWISE
         msg.delay_between_steps = 5
         msg.number_of_step = steps
-        msg.step_size = 0 #FULL_STEP
+        msg.step_size = msg.FULL_STEP
         action_text = "Cooler " + str(msg.number_of_step)
         ioant.publish(msg,topic)
 #----------------------------------------------------
@@ -216,7 +216,6 @@ def setup(configuration):
     thread.start_new_thread(server.init_server,(configuration["web_server"]["port"],
                                                 intent_request))
     print("Setup Done")
-
 
 def loop():
     """ Loop function """
