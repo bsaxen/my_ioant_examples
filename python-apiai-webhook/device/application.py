@@ -39,7 +39,7 @@ def intent_request(req):
     #topic['stream_index'] =  configuration["publish_topic"]["CPUtemp"]["stream_index"]
 
 #----------------------------------------------------
-    if action == "heater.incease":
+    if action == "heater.increase":
 #----------------------------------------------------
         steps = req.get("result").get("parameters").get("steps")
         if steps < 1:
@@ -57,7 +57,7 @@ def intent_request(req):
         action_text = "Warmer " + str(msg.number_of_steps)
         ioant.publish(msg,topic)
 #----------------------------------------------------
-    elif action == "heater.decease":
+    elif action == "heater.decrease":
 #----------------------------------------------------
         steps = req.get("result").get("parameters").get("steps")
         if steps < 1:
