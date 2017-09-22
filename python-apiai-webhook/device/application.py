@@ -50,10 +50,10 @@ def intent_request(req):
         topic['local'] =  "kvv32"
         topic['client_id'] =  "D1"
         msg = ioant.create_message("RunStepperMotorRaw")
-        msg.direction = COUNTER_CLOCKWISE
+        msg.direction = 1 #COUNTER_CLOCKWISE
         msg.delay_between_steps = 5
         msg.number_of_step = steps
-        msg.step_size = FULL_STEP
+        msg.step_size = 0 #FULL_STEP
         action_text = "Warmer " + str(msg.number_of_steps)
         ioant.publish(msg,topic)
 #----------------------------------------------------
@@ -68,10 +68,10 @@ def intent_request(req):
         topic['local'] =  "kvv32"
         topic['client_id'] =  "D1"
         msg = ioant.create_message("RunStepperMotorRaw")
-        msg.direction = CLOCKWISE
+        msg.direction = 0 #CLOCKWISE
         msg.delay_between_steps = 5
         msg.number_of_step = steps
-        msg.step_size = FULL_STEP
+        msg.step_size = 0 #FULL_STEP
         action_text = "Cooler " + str(msg.number_of_steps)
         ioant.publish(msg,topic)
 #----------------------------------------------------
