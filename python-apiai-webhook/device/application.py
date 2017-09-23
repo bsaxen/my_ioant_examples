@@ -18,14 +18,14 @@ import logging
 import hashlib
 logger = logging.getLogger(__name__)
 
-def subscribe_to_topic(t_global,t_local,t_clientid):
+def subscribe_to_topic(t_global,t_local,t_clientid, t_streamindex):
     topic = ioant.get_topic_structure()
     topic['top'] = 'live'
     topic['global'] = t_global
     topic['local'] = t_local
     topic['client_id'] = t_clientid
     topic['message_type'] = ioant.get_message_type("Temperature")
-    topic['stream_index'] = 1
+    topic['stream_index'] = str(t_streamindex)
     print("Subscribe to: ", str(topic))
     ioant.subscribe(topic)
     return
@@ -87,8 +87,9 @@ def intent_request(req):
         topic_global = str(req.get("result").get("parameters").get("global"))
         topic_local = str(req.get("result").get("parameters").get("local"))
         topic_clientid = str(req.get("result").get("parameters").get("clientid"))
-        subscribe_to_topic(topic_global,topic_local,topic_clientid)
-        action_text = "Subscribe to  " + str(topic_global) + " " + str(topic_local) + " " + str(topic_clientid)
+        topic_streamindex = str(req.get("result").get("parameters").get("streamindex"))
+        subscribe_to_topic(topic_global,topic_local,topic_clientid,topic_streamindex)
+        action_text = "Subscribe to  " + str(topic_global) + " " + str(topic_local) + " " + str(topic_clientid) + " " + str(topic_streamindex)
     else:
         return {}
 
@@ -120,7 +121,10 @@ def on_message(topic, message):
     print("Message recieved ...", ioant.get_message_type_name(topic['message_type']))
     #if topic["message_type"] == ioant.get_message_type("Trigger"):
     if "Temperature" == ioant.get_message_type_name(topic['message_type']):
-        print("Message received of type temperature")
+        print("Message received of type Temperature")
+        print("Contains value:" + str(message.value))
+    if "ElectricPower" == ioant.get_message_type_name(topic['message_type']):
+        print("Message received of type ElectricPower")
         print("Contains value:" + str(message.value))
 
 
