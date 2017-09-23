@@ -18,7 +18,19 @@ import logging
 import hashlib
 logger = logging.getLogger(__name__)
 
-def subscribe_to_topic(t_global,t_local,t_clientid, t_streamindex,msgt):
+global tValue
+#global hashToAlias
+global aliasToHash
+global aliasToTopic
+
+def getTopicHash(topic):
+    res = topic['top'] + topic['global'] + topic['local'] + topic['client_id'] + str(topic['message_type']) + str(topic['stream_index'])
+    tres = hash(res)
+    tres = tres% 10**8
+    return tres
+
+def subscribe_to_topic(t_alias,t_global,t_local,t_clientid, t_streamindex):
+    global aliasToHash
     topic = ioant.get_topic_structure()
     topic['top'] = 'live'
     topic['global'] = t_global
@@ -26,14 +38,17 @@ def subscribe_to_topic(t_global,t_local,t_clientid, t_streamindex,msgt):
     topic['client_id'] = t_clientid
     #topic['message_type'] = ioant.get_message_type(msgt)
     topic['stream_index'] = str(t_streamindex)
+    #hashToAlias[getTopicHash(topic)] = t_alias
+    aliasToHash[t_alias] = getTopicHash(topic)
     print("Subscribe to: ", str(topic))
     ioant.subscribe(topic)
     return
 
 def intent_request(req):
-    global currentRed
-    global currentGreen
-    global currentBlue
+    global tValue
+    global hashToAlias
+    global aliasToHash
+    global aliasToTopic
 
     """ Handles and responds on webhook request from API.ai """
     action = req.get("result").get("action")
@@ -84,12 +99,22 @@ def intent_request(req):
 #----------------------------------------------------
     elif action == "mqtt.subscribe":
 #----------------------------------------------------
-        topic_global = str(req.get("result").get("parameters").get("global"))
-        topic_local = str(req.get("result").get("parameters").get("local"))
-        topic_clientid = str(req.get("result").get("parameters").get("clientid"))
-        topic_streamindex = str(req.get("result").get("parameters").get("streamindex"))
-        subscribe_to_topic(topic_global,topic_local,topic_clientid,topic_streamindex,"Temperature")
-        action_text = "Subscribe to  " + str(topic_global) + " " + str(topic_local) + " " + str(topic_clientid) + " " + str(topic_streamindex)
+        topic['alias'] = str(req.get("result").get("parameters").get("alias"))
+        topic['global'] = str(req.get("result").get("parameters").get("global"))
+        topic['local'] = str(req.get("result").get("parameters").get("local"))
+        topic['client_id'] = str(req.get("result").get("parameters").get("clientid"))
+        topic['stream_index'] = str(req.get("result").get("parameters").get("streamindex"))
+        aliasToHash[topic['alias']] = getTopicHash(topic)
+        subscribe_to_topic(topic)
+        action_text = "Subscribe to  " + str(topic)
+#----------------------------------------------------
+    elif action == "show.value":
+#----------------------------------------------------
+        global aliasToTopic
+        topic_alias = str(req.get("result").get("parameters").get("alias"))
+        topic = aliasToTopic[topic_alias]
+        value = tValue[aliasToHash[topic_alias]]
+        action_text = "Value is " + str(value)
     else:
         return {}
 
@@ -118,14 +143,19 @@ def loop():
 
 
 def on_message(topic, message):
+    global tValue
+    tHash = getTopicHash(topic)
     print("Message recieved ...", ioant.get_message_type_name(topic['message_type']))
     #if topic["message_type"] == ioant.get_message_type("Trigger"):
     if "Temperature" == ioant.get_message_type_name(topic['message_type']):
         print("Message received of type Temperature")
         print("Contains value:" + str(message.value))
+        tValue[tHash] = str(message.value)
     if "ElectricPower" == ioant.get_message_type_name(topic['message_type']):
         print("Message received of type ElectricPower")
         print("Contains value:" + str(message.value))
+        writeToFile(topic,message)
+        tValue[tHash] = str(message.value)
 
 
 def on_connect():
