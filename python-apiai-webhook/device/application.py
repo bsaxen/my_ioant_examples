@@ -13,11 +13,6 @@ import os
 import thread
 import server
 
-currentRed = 1;
-currentGreen = 1;
-currentBlue = 1;
-pwm_max = 1023;
-
 from ioant.sdk import IOAnt
 import logging
 import hashlib
@@ -125,8 +120,8 @@ def on_message(topic, message):
     print("Message recieved ...", ioant.get_message_type_name(topic['message_type']))
     #if topic["message_type"] == ioant.get_message_type("Trigger"):
     if "Temperature" == ioant.get_message_type_name(topic['message_type']):
-        logger.debug("Message received of type temperature")
-        logger.debug("Contains value:" + str(message.value))
+        print("Message received of type temperature")
+        print("Contains value:" + str(message.value))
 
 
 def on_connect():
