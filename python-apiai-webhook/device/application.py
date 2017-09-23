@@ -122,7 +122,7 @@ def loop():
 
 
 def on_message(topic, message):
-    print("Message recieved ...")
+    print("Message recieved ...", ioant.get_message_type_name(topic['message_type']))
     #if topic["message_type"] == ioant.get_message_type("Trigger"):
     if "Temperature" == ioant.get_message_type_name(topic['message_type']):
         logger.debug("Message received of type temperature")
