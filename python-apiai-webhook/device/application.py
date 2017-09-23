@@ -18,13 +18,13 @@ import logging
 import hashlib
 logger = logging.getLogger(__name__)
 
-def subscribe_to_topic(t_global,t_local,t_clientid, t_streamindex):
+def subscribe_to_topic(t_global,t_local,t_clientid, t_streamindex,msgt):
     topic = ioant.get_topic_structure()
     topic['top'] = 'live'
     topic['global'] = t_global
     topic['local'] = t_local
     topic['client_id'] = t_clientid
-    topic['message_type'] = ioant.get_message_type("Temperature")
+    #topic['message_type'] = ioant.get_message_type(msgt)
     topic['stream_index'] = str(t_streamindex)
     print("Subscribe to: ", str(topic))
     ioant.subscribe(topic)
@@ -88,7 +88,7 @@ def intent_request(req):
         topic_local = str(req.get("result").get("parameters").get("local"))
         topic_clientid = str(req.get("result").get("parameters").get("clientid"))
         topic_streamindex = str(req.get("result").get("parameters").get("streamindex"))
-        subscribe_to_topic(topic_global,topic_local,topic_clientid,topic_streamindex)
+        subscribe_to_topic(topic_global,topic_local,topic_clientid,topic_streamindex,"Temperature")
         action_text = "Subscribe to  " + str(topic_global) + " " + str(topic_local) + " " + str(topic_clientid) + " " + str(topic_streamindex)
     else:
         return {}
