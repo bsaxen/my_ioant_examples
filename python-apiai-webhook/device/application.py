@@ -31,7 +31,7 @@ def subscribe_to_topic(t_global,t_local,t_clientid):
     topic['client_id'] = t_clientid
     #topic['message_type'] = ioant.get_message_type(msgt)
     #topic['stream_index'] = configuration["subscribe_topic"][par]["stream_index"]
-    print "Subscribe to: " + str(topic)
+    print("Subscribe to: ", str(topic))
     ioant.subscribe(topic)
     return
 
