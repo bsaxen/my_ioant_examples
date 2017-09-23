@@ -93,6 +93,7 @@ def intent_request(req):
         topic_local = str(req.get("result").get("parameters").get("local"))
         topic_clientid = str(req.get("result").get("parameters").get("clientid"))
         subscribe_to_topic(topic_global,topic_local,topic_clientid)
+        action_text = "Subscribe to  " + str(topic_global) + " " + str(topic_local) + " " + str(topic_clientid)
     else:
         return {}
 
@@ -121,7 +122,8 @@ def loop():
 
 
 def on_message(topic, message):
-    if "Temperature" == ioant.get_message_type_name(topic[message_type]):
+    #if topic["message_type"] == ioant.get_message_type("Trigger"):
+    if "Temperature" == ioant.get_message_type_name(topic['message_type']):
         logger.debug("Message received of type temperature")
         logger.debug("Contains value:" + str(message.value))
 
