@@ -89,9 +89,9 @@ def intent_request(req):
 #----------------------------------------------------
     elif action == "mqtt.subscribe":
 #----------------------------------------------------
-        topic_global = int(req.get("result").get("parameters").get("global"))
-        topic_local = int(req.get("result").get("parameters").get("local"))
-        topic_clientid = int(req.get("result").get("parameters").get("clientid"))
+        topic_global = req.get("result").get("parameters").get("global")
+        topic_local = req.get("result").get("parameters").get("local")
+        topic_clientid = req.get("result").get("parameters").get("clientid")
         subscribe_to_topic(topic_global,topic_local,topic_clientid)
     else:
         return {}
