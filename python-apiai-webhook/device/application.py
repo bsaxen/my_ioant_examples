@@ -29,8 +29,8 @@ def subscribe_to_topic(t_global,t_local,t_clientid):
     topic['global'] = t_global
     topic['local'] = t_local
     topic['client_id'] = t_clientid
-    #topic['message_type'] = ioant.get_message_type(msgt)
-    #topic['stream_index'] = configuration["subscribe_topic"][par]["stream_index"]
+    topic['message_type'] = ioant.get_message_type("Temperature")
+    topic['stream_index'] = 1
     print("Subscribe to: ", str(topic))
     ioant.subscribe(topic)
     return
@@ -89,9 +89,9 @@ def intent_request(req):
 #----------------------------------------------------
     elif action == "mqtt.subscribe":
 #----------------------------------------------------
-        topic_global = req.get("result").get("parameters").get("global")
-        topic_local = req.get("result").get("parameters").get("local")
-        topic_clientid = req.get("result").get("parameters").get("clientid")
+        topic_global = str(req.get("result").get("parameters").get("global"))
+        topic_local = str(req.get("result").get("parameters").get("local"))
+        topic_clientid = str(req.get("result").get("parameters").get("clientid"))
         subscribe_to_topic(topic_global,topic_local,topic_clientid)
     else:
         return {}
