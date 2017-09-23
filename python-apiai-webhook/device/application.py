@@ -18,11 +18,6 @@ import logging
 import hashlib
 logger = logging.getLogger(__name__)
 
-global tValue
-#global hashToAlias
-global aliasToHash
-global aliasToTopic
-
 def getTopicHash(topic):
     res = topic['top'] + topic['global'] + topic['local'] + topic['client_id'] + str(topic['message_type']) + str(topic['stream_index'])
     tres = hash(res)
@@ -46,7 +41,7 @@ def subscribe_to_topic(t_alias,t_global,t_local,t_clientid, t_streamindex):
 
 def intent_request(req):
     global tValue
-    global hashToAlias
+    #global hashToAlias
     global aliasToHash
     global aliasToTopic
 
@@ -110,7 +105,6 @@ def intent_request(req):
 #----------------------------------------------------
     elif action == "show.value":
 #----------------------------------------------------
-        global aliasToTopic
         topic_alias = str(req.get("result").get("parameters").get("alias"))
         value = tValue[aliasToHash[topic_alias]]
         action_text = "Value is " + str(value)
@@ -137,6 +131,10 @@ def setup(configuration):
     print("Setup Done")
 
 def loop():
+    global tValue
+    #global hashToAlias
+    global aliasToHash
+    global aliasToTopic
     """ Loop function """
     ioant.update_loop()
 
