@@ -112,7 +112,6 @@ def intent_request(req):
 #----------------------------------------------------
         global aliasToTopic
         topic_alias = str(req.get("result").get("parameters").get("alias"))
-        topic = aliasToTopic[topic_alias]
         value = tValue[aliasToHash[topic_alias]]
         action_text = "Value is " + str(value)
     else:
