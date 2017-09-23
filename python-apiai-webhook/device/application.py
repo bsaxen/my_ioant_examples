@@ -23,6 +23,18 @@ import logging
 import hashlib
 logger = logging.getLogger(__name__)
 
+def subscribe_to_topic(t_global,t_local,t_clientid):
+    topic = ioant.get_topic_structure()
+    topic['top'] = 'live'
+    topic['global'] = t_global
+    topic['local'] = t_local
+    topic['client_id'] = t_clientid
+    #topic['message_type'] = ioant.get_message_type(msgt)
+    #topic['stream_index'] = configuration["subscribe_topic"][par]["stream_index"]
+    print "Subscribe to: " + str(topic)
+    ioant.subscribe(topic)
+    return
+
 def intent_request(req):
     global currentRed
     global currentGreen
@@ -75,126 +87,12 @@ def intent_request(req):
         action_text = "Cooler " + str(msg.number_of_step)
         ioant.publish(msg,topic)
 #----------------------------------------------------
-    elif action == "rgb.set":
+    elif action == "mqtt.subscribe":
 #----------------------------------------------------
-        color = req.get("result").get("parameters").get("color")
-        pwm = int(req.get("result").get("parameters").get("pwm"))
-        if pwm > pwm_max:
-            pwm = pwm_max
-        if pwm < 1:
-            pwm = 1
-
-        msg = ioant.create_message("Color")
-
-        if color == "red":
-            currentRed = pwm
-        if color == "green":
-            currentGreen = pwm
-        if color == "blue":
-            currentBlue = pwm
-
-        msg.red = currentRed
-        msg.green = currentGreen
-        msg.blue = currentBlue
-        #action_text = "set rgb " + color + " to " + str(pwm)
-        action_text = "set rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
-        ioant.publish(msg,topic)
-#----------------------------------------------------
-    elif action == "rgb.zero":
-#----------------------------------------------------
-        msg = ioant.create_message("Color")
-        currentRed= 1
-        currentGreen = 1
-        currentBlue = 1
-
-        msg.red = currentRed
-        msg.green = currentGreen
-        msg.blue = currentBlue
-        #action_text = "set rgb " + color + " to " + str(pwm)
-        action_text = "zero rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
-        ioant.publish(msg,topic)
-#----------------------------------------------------
-    elif action == "rgb.max":
-#----------------------------------------------------
-        msg = ioant.create_message("Color")
-        currentRed = pwm_max
-        currentGreen = pwm_max
-        currentBlue = pwm_max
-
-        msg.red = currentRed
-        msg.green = currentGreen
-        msg.blue = currentBlue
-        #action_text = "set rgb " + color + " to " + str(pwm)
-        action_text = "max rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
-        ioant.publish(msg,topic)
-#----------------------------------------------------
-    elif action == "rgb.increase":
-#----------------------------------------------------
-        color = req.get("result").get("parameters").get("color")
-        pwm = int(req.get("result").get("parameters").get("pwm"))
-        #action_text = "rgb increase " + color + " with " + str(pwm)
-        msg = ioant.create_message("Color")
-        if color == "red":
-            itemp = currentRed + pwm
-            if itemp > pwm_max:
-                itemp = pwm_max
-            if itemp < 1:
-                itemp = 1
-            currentRed = itemp
-        if color == "green":
-            itemp = currentGreen + pwm
-            if itemp > pwm_max:
-                itemp = pwm_max
-            if itemp < 1:
-                itemp = 1
-            currentGreen = itemp
-        if color == "blue":
-            itemp = currentBlue + pwm
-            if itemp > pwm_max:
-                itemp = pwm_max
-            if itemp < 1:
-                itemp = 1
-            currentBlue = itemp
-
-        msg.red = currentRed
-        msg.green = currentGreen
-        msg.blue = currentBlue
-        action_text = "increase rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
-        ioant.publish(msg,topic)
-#----------------------------------------------------
-    elif action == "rgb.decrease":
-#----------------------------------------------------
-        color = req.get("result").get("parameters").get("color")
-        pwm = int(req.get("result").get("parameters").get("pwm"))
-        #action_text = "rgb decrease " + color + " with " + str(pwm)
-        msg = ioant.create_message("Color")
-        if color == "red":
-            itemp = currentRed - pwm
-            if itemp > pwm_max:
-                itemp = pwm_max
-            if itemp < 1:
-                itemp = 1
-            currentRed = itemp
-        if color == "green":
-            itemp = currentGreen - pwm
-            if itemp > pwm_max:
-                itemp = pwm_max
-            if itemp < 1:
-                itemp = 1
-            currentGreen = itemp
-        if color == "blue":
-            itemp = currentBlue - pwm
-            if itemp > pwm_max:
-                itemp = pwm_max
-            if itemp < 1:
-                itemp = 1
-            currentBlue = itemp
-
-        msg.red = currentRed
-        msg.green = currentGreen
-        msg.blue = currentBlue
-        action_text = "decrease rgb " + str(msg.red) +" "+str(msg.green)+" "+str(msg.blue)
-        ioant.publish(msg,topic)
+        topic_global = int(req.get("result").get("parameters").get("global"))
+        topic_local = int(req.get("result").get("parameters").get("local"))
+        topic_clientid = int(req.get("result").get("parameters").get("clientid"))
+        subscribe_to_topic(topic_global,topic_local,topic_clientid)
     else:
         return {}
 
