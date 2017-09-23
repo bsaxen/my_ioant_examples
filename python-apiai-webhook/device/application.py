@@ -1,6 +1,6 @@
 # =============================================
 # Benny Saxen
-# Date: 2017-09-22
+# Date: 2017-09-23
 # Description: API.ai webhook with IOAnt support
 # =============================================
 
@@ -68,7 +68,7 @@ def intent_request(req):
         topic['local'] =  "kvv32"
         topic['client_id'] =  "D1"
         msg = ioant.create_message("RunStepperMotorRaw")
-        msg.direction = msgself.CLOCKWISE
+        msg.direction = msg.CLOCKWISE
         msg.delay_between_steps = 5
         msg.number_of_step = steps
         msg.step_size = msg.FULL_STEP
