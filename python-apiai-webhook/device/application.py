@@ -43,10 +43,10 @@ def writeSubscription(topic,alias):
     file.write(alias)
     file.close()
 
-    filename = getFilenameFromAlias(alias,"sub")
-    file = open(filename,"w")
-    file.write(topic)
-    file.close()
+    #filename = getFilenameFromAlias(alias,"sub")
+    #file = open(filename,"w")
+    #file.write(topic)
+    #file.close()
     return
 
 #----------------------------------------------------
