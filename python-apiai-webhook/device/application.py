@@ -211,8 +211,7 @@ def on_message(topic, message):
     #tHash = getTopicHash(topic)
     print("Message recieved ...", ioant.get_message_type_name(topic['message_type']))
     #if topic["message_type"] == ioant.get_message_type("Trigger"):
-    filename = getFilenameFromTopic()
-    filename = getFilenameFromTopic()
+    t_alias = readAlias(topic)
     if "Temperature" == ioant.get_message_type_name(topic['message_type']):
         print("Message received of type Temperature")
         print("Contains value:" + str(message.value))
