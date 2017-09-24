@@ -23,6 +23,60 @@ aliasToHash = []
 aliasToTopic = []
 
 #----------------------------------------------------
+def getFilenameFromTopic(topic,extension):
+#----------------------------------------------------
+    filename = topic['global'] + "_" + topic['local'] + "_" + topic['client_id'] + "_" + topic['stream_index']
+    filename = filename + "." + extension
+    return filename
+
+#----------------------------------------------------
+def getFilenameFromAlias(alias,extension):
+#----------------------------------------------------
+    filename = alias + "." + extension
+    return filename
+
+#----------------------------------------------------
+def writeSubscription(topic,alias):
+#----------------------------------------------------
+    filename = getFilenameFromTopic(topic,"sub")
+    file = open(filename,"w")
+    file.write(alias)
+    file.close()
+
+    filename = getFilenameFromAlias(alias,"sub")
+    file = open(filename,"w")
+    file.write(topic)
+    file.close()
+    return
+
+#----------------------------------------------------
+def readAlias(topic):
+#----------------------------------------------------
+    filename = getFilenameFromTopic(topic,"sub")
+    file = open(filename,"r")
+    line = file.read()
+    file.close()
+    return alias
+
+#----------------------------------------------------
+def writeValue(alias,value):
+#----------------------------------------------------
+    filename = getFilenameFromAlias(alias,"value")
+    file = open(filename,"w")
+    file.write(value)
+    file.close()
+    return
+
+#----------------------------------------------------
+def readValue(alias):
+#----------------------------------------------------
+    filename = getFilenameFromAlias(alias,"value")
+    file = open(filename,"r")
+    value = file.read()
+    file.close()
+    return value
+
+#----------------------------------------------------
 def getTopicHash(topic):
 #----------------------------------------------------
     res = topic['top'] + topic['global'] + topic['local'] + topic['client_id'] + str(topic['message_type']) + str(topic['stream_index'])
@@ -33,7 +87,6 @@ def getTopicHash(topic):
 #----------------------------------------------------
 def subscribe_to_topic(t_alias,t_global,t_local,t_clientid, t_streamindex):
 #----------------------------------------------------
-    global aliasToHash
     topic = ioant.get_topic_structure()
     topic['top'] = 'live'
     topic['global'] = t_global
@@ -41,8 +94,9 @@ def subscribe_to_topic(t_alias,t_global,t_local,t_clientid, t_streamindex):
     topic['client_id'] = t_clientid
     #topic['message_type'] = ioant.get_message_type(msgt)
     topic['stream_index'] = str(t_streamindex)
-    #hashToAlias[getTopicHash(topic)] = t_alias
-    aliasToHash[t_alias] = getTopicHash(topic)
+
+    writeSubscription(topic,t_alias)
+
     print("Subscribe to: ", str(topic))
     ioant.subscribe(topic)
     return
@@ -103,14 +157,14 @@ def intent_request(req):
 #----------------------------------------------------
     elif action == "mqtt.subscribe":
 #----------------------------------------------------
-        topic['alias'] = str(req.get("result").get("parameters").get("alias"))
+        t_alias = str(req.get("result").get("parameters").get("alias"))
         topic['global'] = str(req.get("result").get("parameters").get("global"))
         topic['local'] = str(req.get("result").get("parameters").get("local"))
         topic['client_id'] = str(req.get("result").get("parameters").get("clientid"))
         topic['stream_index'] = str(req.get("result").get("parameters").get("streamindex"))
-        aliasToHash[topic['alias']] = getTopicHash(topic)
-        subscribe_to_topic(topic)
-        action_text = "Subscribe to  " + str(topic)
+        #aliasToHash[topic['alias']] = getTopicHash(topic)
+        subscribe_to_topic(t_alias,topic)
+        action_text = "Subscribe to  " + str(topic) + " " + t_alias
 #----------------------------------------------------
     elif action == "show.value":
 #----------------------------------------------------
@@ -153,19 +207,20 @@ def loop():
 #=====================================================
 def on_message(topic, message):
 #=====================================================
-    global tValue
-    tHash = getTopicHash(topic)
+    #global tValue
+    #tHash = getTopicHash(topic)
     print("Message recieved ...", ioant.get_message_type_name(topic['message_type']))
     #if topic["message_type"] == ioant.get_message_type("Trigger"):
+    filename = getFilenameFromTopic()
+    filename = getFilenameFromTopic()
     if "Temperature" == ioant.get_message_type_name(topic['message_type']):
         print("Message received of type Temperature")
         print("Contains value:" + str(message.value))
-        tValue[tHash] = str(message.value)
+        writeValue(t_alias,str(message.value))
     if "ElectricPower" == ioant.get_message_type_name(topic['message_type']):
         print("Message received of type ElectricPower")
         print("Contains value:" + str(message.value))
-        writeToFile(topic,message)
-        tValue[tHash] = str(message.value)
+        writeValue(t_alias,str(message.value))
 
 #=====================================================
 def on_connect():
