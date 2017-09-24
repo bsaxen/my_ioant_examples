@@ -25,7 +25,7 @@ aliasToTopic = []
 #----------------------------------------------------
 def getFilenameFromTopic(topic,extension):
 #----------------------------------------------------
-    filename = topic['global'] + "_" + topic['local'] + "_" + topic['client_id'] + "_" + topic['stream_index']
+    filename = topic['global'] + "_" + topic['local'] + "_" + topic['client_id'] + "_" + str(topic['stream_index'])
     filename = filename + "." + extension
     return filename
 
