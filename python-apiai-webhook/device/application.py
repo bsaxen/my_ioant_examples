@@ -168,9 +168,9 @@ def intent_request(req):
 #----------------------------------------------------
     elif action == "show.value":
 #----------------------------------------------------
-        topic_alias = str(req.get("result").get("parameters").get("alias"))
-        value = tValue[aliasToHash[topic_alias]]
-        action_text = "Value is " + str(value)
+        t_alias = str(req.get("result").get("parameters").get("alias"))
+        value = readValue(t_alias)
+        action_text = t_alias + " " + str(value)
     else:
         return {}
 
