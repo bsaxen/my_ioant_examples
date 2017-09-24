@@ -54,7 +54,7 @@ def readAlias(topic):
 #----------------------------------------------------
     filename = getFilenameFromTopic(topic,"sub")
     file = open(filename,"r")
-    line = file.read()
+    alias = file.read()
     file.close()
     return alias
 
