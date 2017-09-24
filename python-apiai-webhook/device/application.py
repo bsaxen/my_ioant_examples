@@ -163,7 +163,7 @@ def intent_request(req):
         topic['client_id'] = str(req.get("result").get("parameters").get("clientid"))
         topic['stream_index'] = str(req.get("result").get("parameters").get("streamindex"))
         #aliasToHash[topic['alias']] = getTopicHash(topic)
-        subscribe_to_topic(t_alias,topic)
+        subscribe_to_topic(t_alias,topic['global'],topic['local'],topic['client_id'],topic['stream_index'])
         action_text = "Subscribe to  " + str(topic) + " " + t_alias
 #----------------------------------------------------
     elif action == "show.value":
