@@ -18,13 +18,21 @@ import logging
 import hashlib
 logger = logging.getLogger(__name__)
 
+tValue = []
+aliasToHash = []
+aliasToTopic = []
+
+#----------------------------------------------------
 def getTopicHash(topic):
+#----------------------------------------------------
     res = topic['top'] + topic['global'] + topic['local'] + topic['client_id'] + str(topic['message_type']) + str(topic['stream_index'])
     tres = hash(res)
     tres = tres% 10**8
     return tres
 
+#----------------------------------------------------
 def subscribe_to_topic(t_alias,t_global,t_local,t_clientid, t_streamindex):
+#----------------------------------------------------
     global aliasToHash
     topic = ioant.get_topic_structure()
     topic['top'] = 'live'
@@ -39,9 +47,10 @@ def subscribe_to_topic(t_alias,t_global,t_local,t_clientid, t_streamindex):
     ioant.subscribe(topic)
     return
 
+#----------------------------------------------------
 def intent_request(req):
+#----------------------------------------------------
     global tValue
-    #global hashToAlias
     global aliasToHash
     global aliasToTopic
 
@@ -122,15 +131,18 @@ def intent_request(req):
         "source": ioant.get_configuration()["app_name"]
     }
 
-
+#=====================================================
 def setup(configuration):
+#=====================================================
     """ setup function """
     ioant.setup(configuration)
     thread.start_new_thread(server.init_server,(configuration["web_server"]["port"],
                                                 intent_request))
     print("Setup Done")
 
+#=====================================================
 def loop():
+#=====================================================
     global tValue
     #global hashToAlias
     global aliasToHash
@@ -138,8 +150,9 @@ def loop():
     """ Loop function """
     ioant.update_loop()
 
-
+#=====================================================
 def on_message(topic, message):
+#=====================================================
     global tValue
     tHash = getTopicHash(topic)
     print("Message recieved ...", ioant.get_message_type_name(topic['message_type']))
@@ -154,8 +167,9 @@ def on_message(topic, message):
         writeToFile(topic,message)
         tValue[tHash] = str(message.value)
 
-
+#=====================================================
 def on_connect():
+#=====================================================
     """ On connect function. Called when connected to broker """
 
 
