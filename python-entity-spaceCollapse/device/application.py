@@ -41,7 +41,7 @@ def on_message(topic, message):
        unit = "celcius"
     if(topic['message_type'] == 8): # electric power
        unit = "watt"
-    scUrl = "http://localhost/spacecollapse/spcoServer/scServer.php?"
+    scUrl = "http://spacecollapse.simuino.com/spcoServer/scServer.php?"
     scUrl = scUrl + "label=" + topic["global"]+'_'+topic["local"]+'_'+topic["client_id"]+'_'+str(topic["stream_index"])
     scUrl = scUrl + "&value=" + "{0:.2f}".format(message.value)
     scUrl = scUrl + "&unit=" + unit
