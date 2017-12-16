@@ -1,5 +1,5 @@
-# reports an interrrupt
-
+# Status device
+Reports status of pin
 
 
 ```sh

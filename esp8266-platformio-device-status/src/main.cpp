@@ -1,8 +1,8 @@
 ///
 /// @file   main.cpp
 /// @Author Benny Saxen
-/// @date   2017-06-25
-/// @brief  INTERRUPT_TRIGGER
+/// @date   2017-12-16
+/// @brief  Pin Status
 ///
 
 #include <ioant.h>
@@ -27,10 +27,10 @@ void measure();
 // END OF - Custom function definitions
 
 // CUSTOM variables
-const byte interrupt_pin = 5;
+const byte status_pin = 5;
 const byte led_pin = 4;
-int interrupt_counter = 0;
 int toBeUsed;
+int current_status = 0;
 
 // END OF - CUSTOM variables
 
@@ -51,45 +51,37 @@ void setup(void){
     toBeUsed =  loaded_configuration.app_generic_a;
 
     // Add additional set up code here
-    pinMode(interrupt_pin, INPUT_PULLUP);
+    pinMode(status_pin, INPUT);
     pinMode(led_pin, OUTPUT);
     digitalWrite(led_pin,LOW);
-    attachInterrupt(interrupt_pin, measure, CHANGE);
-
-
 }
 
 void loop(void){
     IOANT->UpdateLoop();
-    TriggerMessage msg;
-    msg.data.extra = interrupt_counter;
-    ULOG_DEBUG << interrupt_counter;
+    AlarmMessage msg;
 
+    current_status = digitalRead(status_pin);
+    if(current_status == LOW)msg.data.meta = "OPENED";
+    if(current_status == HIGH)msg.data.meta = "CLOSED";
+    ULOG_DEBUG << current_status;
 
+    digitalWrite(led_pin,HIGH);
+    bool result = IOANT->Publish(msg);
+    ULOG_DEBUG << result << " " << msg.data.meta;
 
-    //digitalWrite(led_pin,LOW);
-    if(interrupt_counter > 0)
+    if(current_status == LOW)
     {
-      digitalWrite(led_pin,HIGH);
-      bool result = IOANT->Publish(msg);
-      interrupt_counter  = 0;
-      ULOG_DEBUG << result << " " << (int)msg.data.extra;
-      delay(300);
-      digitalWrite(led_pin,LOW);
+       digitalWrite(led_pin,HIGH);
+       delay(100);
+       digitalWrite(led_pin,LOW);
     }
-
+    delay(100);
+    digitalWrite(led_pin,HIGH);
+    delay(100);
+    digitalWrite(led_pin,LOW);
 }
 
 // Function for handling received MQTT messages
 void on_message(Ioant::Topic received_topic, ProtoIO* message){
     WLOG_DEBUG << "Message received! topic:" << received_topic.global  << " message type:" << received_topic.message_type ;
-}
-
-
-// Interrupt function
-// Always stored in RAM
-void ICACHE_RAM_ATTR measure(){
-    digitalWrite(led_pin,HIGH);
-    interrupt_counter++;
-    digitalWrite(led_pin,LOW);
 }
