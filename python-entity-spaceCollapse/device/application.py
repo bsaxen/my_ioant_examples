@@ -1,7 +1,8 @@
 # =============================================
-# Benny Saxen
+# File: spacecollapse
+# Author: Benny Saxen
 # Date: 2017-10-23
-#
+# Description:
 # =============================================
 from ioant.sdk import IOAnt
 import logging
@@ -33,8 +34,9 @@ def loop():
 
 def on_message(topic, message):
     print "message received - publish to Space Collapse Server"
-    print topic["message_type"]
+    print topic['message_type']
     print topic
+    msg_type_string = ioant.get_message_type_name(topic['message_type'])
     #print message.value
     #print topic["message_type"]
     if(topic['message_type'] == 4): # temperature
@@ -42,11 +44,12 @@ def on_message(topic, message):
     if(topic['message_type'] == 8): # electric power
        unit = "watt"
     scUrl = "http://spacecollapse.simuino.com/scServer.php?"
-    scUrl = scUrl + "label=" + topic["global"]+'_'+topic["local"]+'_'+topic["client_id"]+'_'+str(topic["stream_index"])
+    scUrl = scUrl + "type=" + msg_type_string
+    scUrl = scUrl + "&label=" + topic["global"]+'_'+topic["local"]+'_'+topic["client_id"]+'_'+str(topic["stream_index"])
     scUrl = scUrl + "&value=" + "{0:.2f}".format(message.value)
     scUrl = scUrl + "&unit=" + unit
     #scUrl = scUrl + "&datetime=" + 20171022
-    #scUrl = scUrl + "&description=" + 
+    #scUrl = scUrl + "&description=" +
     #%22This%20is%20a%20measurement%20in%20my%20house%22"
     print scUrl
     r = requests.get(scUrl)
