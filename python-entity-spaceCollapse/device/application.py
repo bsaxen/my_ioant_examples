@@ -50,7 +50,7 @@ def on_message(topic, message):
     scUrl = scUrl + "&label=" + topic["global"]+'_'+topic["local"]+'_'+topic["client_id"]+'_'+str(topic["stream_index"])
     scUrl = scUrl + "&value=" + "{0:.2f}".format(message.value)
     scUrl = scUrl + "&unit=" + unit
-    scUrl = scUrl + "&datetime=" + datetime.datetime.now
+    scUrl = scUrl + "&datetime=" + datetime.datetime.now.strftime("%y-%m-%d-%H-%M-%S")
     #scUrl = scUrl + "&description=" +
     #%22This%20is%20a%20measurement%20in%20my%20house%22"
     print scUrl
