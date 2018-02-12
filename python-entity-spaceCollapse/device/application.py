@@ -1,13 +1,15 @@
 # =============================================
 # File: spacecollapse
 # Author: Benny Saxen
-# Date: 2017-10-23
-# Description:
+# Date: 2018-02-12
+# Description: Bridge Ioant and Spacecollapse
 # =============================================
 from ioant.sdk import IOAnt
 import logging
 import math
 import requests
+import time
+import datetime
 logger = logging.getLogger(__name__)
 
 def subscribe_to_topic():
@@ -48,7 +50,7 @@ def on_message(topic, message):
     scUrl = scUrl + "&label=" + topic["global"]+'_'+topic["local"]+'_'+topic["client_id"]+'_'+str(topic["stream_index"])
     scUrl = scUrl + "&value=" + "{0:.2f}".format(message.value)
     scUrl = scUrl + "&unit=" + unit
-    #scUrl = scUrl + "&datetime=" + 20171022
+    scUrl = scUrl + "&datetime=" + datetime.datetime.now
     #scUrl = scUrl + "&description=" +
     #%22This%20is%20a%20measurement%20in%20my%20house%22"
     print scUrl
