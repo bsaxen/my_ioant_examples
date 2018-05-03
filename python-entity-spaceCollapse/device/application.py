@@ -13,19 +13,26 @@ import time
 import datetime
 logger = logging.getLogger(__name__)
 
-def publish_ioant_message(t_msg,t_global,t_local_t_client_id,t_stream_index):
-    out_msg = ioant.create_message(t_msg)
+def publish_ioant_message(t_msg):
+    # Message syntax:  message_type global local client_id stream_index
+    #                    0      1      2         3          4
+    # If RunstepperMotorRaw:
+    # direction delay_between_steps number_of_step step_size
+    #    5              6           7                8
+    #--------------------------------------------------------
+    t_par = t_msg.split(" ")
+    out_msg = ioant.create_message(t_par[0])
     topic = ioant.get_topic_structure()
     topic['top'] = 'live'
-    topic['global'] = t_global
-    topic['local'] = t_local
-    topic['client_id'] = t_client_id
-    topic['stream_index'] = t_stream_index
-    if t_msg == "RunStepperMotorRaw":
-        out_msg.direction = direction
-        out_msg.delay_between_steps = 5
-        out_msg.number_of_step = steps
-        out_msg.step_size = out_msg.StepSize.Value("FULL_STEP")
+    topic['global'] = t_par[1]
+    topic['local'] = t_par[2]
+    topic['client_id'] = t_par[3]
+    topic['stream_index'] = t_par[4]
+    if t_par[0] == "RunStepperMotorRaw":
+        out_msg.direction = t_par[5]
+        out_msg.delay_between_steps = t_par[6]
+        out_msg.number_of_step = t_par[7]
+        out_msg.step_size = t_par[8]
     ioant.publish(out_msg, topic)
 
 def subscribe_to_topic():
@@ -72,7 +79,8 @@ def on_message(topic, message):
     print scUrl
     r = requests.get(scUrl)
     print r.text
-    print r.content
+    publish_ioant_message(r.text)
+    #print r.content
 
 
 def on_connect():
