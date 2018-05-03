@@ -1,8 +1,9 @@
 # =============================================
 # File: spacecollapse
 # Author: Benny Saxen
-# Date: 2018-02-12
+# Date: 2018-05-03
 # Description: Bridge Ioant and Spacecollapse
+#              Publish and action
 # =============================================
 from ioant.sdk import IOAnt
 import logging
@@ -11,6 +12,21 @@ import requests
 import time
 import datetime
 logger = logging.getLogger(__name__)
+
+def publish_ioant_message(t_msg,t_global,t_local_t_client_id,t_stream_index):
+    out_msg = ioant.create_message(t_msg)
+    topic = ioant.get_topic_structure()
+    topic['top'] = 'live'
+    topic['global'] = t_global
+    topic['local'] = t_local
+    topic['client_id'] = t_client_id
+    topic['stream_index'] = t_stream_index
+    if t_msg == "RunStepperMotorRaw":
+        out_msg.direction = direction
+        out_msg.delay_between_steps = 5
+        out_msg.number_of_step = steps
+        out_msg.step_size = out_msg.StepSize.Value("FULL_STEP")
+    ioant.publish(out_msg, topic)
 
 def subscribe_to_topic():
     configuration = ioant.get_configuration()
