@@ -55,6 +55,8 @@ def on_message(topic, message):
     #%22This%20is%20a%20measurement%20in%20my%20house%22"
     print scUrl
     r = requests.get(scUrl)
+    print r.text
+    print r.content
 
 
 def on_connect():
