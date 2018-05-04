@@ -79,8 +79,8 @@ def on_message(topic, message):
     print scUrl
     r = requests.get(scUrl)
     print r.text
-    publish_ioant_message(r.text)
-    #print r.content
+    #publish_ioant_message(r.text)
+    print r.content
 
 
 def on_connect():
