@@ -24,9 +24,18 @@ def read_data (row):
 	global temperature_smoke
 
 	try:
-		f = open("test.work",'r')
-		pos = int(f.read())
+		with open("test.work",'r') as f:
+			content = f.readlines()
+			line = content[row]
+			print line
+			line2 = line.split(' ')
+			temperature_indoor = float(line2[0])
+			temperature_outdoor = float(line2[1])
+			temperature_water_in = float(line2[2])
+			temperature_water_out = float(line2[3])
+			temperature_smoke = float(line2[4])
 		f.close()
+		
 	except:
 		print("ERRROR Reading test file")
 	
