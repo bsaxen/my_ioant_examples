@@ -1,3 +1,165 @@
+# =============================================
+# File: test-heatercontrol.py
+# Author: Benny Saxen
+# Date: 2018-10-16
+# Description: IOANT heater control algorithm
+# 90 degrees <=> 1152/4 steps = 288
+# =============================================
+#from ioant.sdk import IOAnt
+import logging
+import hashlib
+import math
+import urllib
+import urllib2
+import time
+import datetime
+
+#logger = logging.getLogger(__name__)
+
+#===================================================
+def spacecollapse_op1 ( label, typ, value ):
+#===================================================
+	url = 'http://spacecollapse.simuino.com/scServer.php'
+	data = {}
+	data['op'] = 1
+	data['label'] = label
+	data['type'] = typ
+	data['value'] = value
+
+	values = urllib.urlencode(data)
+	req = url + '?' + values
+	try: response = urllib2.urlopen(req)
+	except urllib2.URLError as e:
+		print e.reason
+	the_page = response.read()
+
+#===================================================
+def spacecollapse_op2 ( label, param ):
+#===================================================
+	url = 'http://spacecollapse.simuino.com/scServer.php'
+	data = {}
+	data['op'] = 2
+	data['label'] = label
+	data['param'] = param
+
+	values = urllib.urlencode(data)
+	req = url + '?' + values
+	try: response = urllib2.urlopen(req)
+	except urllib2.URLError as e:
+		print e.reason
+	the_page = response.read()
+
+#=====================================================
+def write_position(pos):
+    try:
+        f = open("position.work",'w')
+        s = str(pos)
+        f.write(s)
+        f.close()
+    except:
+        print "ERROR write to position file"
+    return
+#=====================================================
+def read_position():
+    try:
+        f = open("position.work",'r')
+        pos = int(f.read())
+        f.close()
+    except:
+        print("WARNING Create position file")
+        f = open("position.work",'w')
+        s = str(0)
+        f.write(s)
+        f.close()
+        pos = 0
+    return pos
+#=====================================================
+def write_history(message):
+    try:
+        f = open("history.work",'a')
+	f.write(datetime.datetime.now().strftime("%y-%m-%d %H:%M:%S")+" ")
+        f.write(message)
+        f.write('\n')
+        f.close()
+    except:
+        print "ERROR write to history file"
+    return
+#=====================================================
+def write_log(message):
+    try:
+        f = open("log.work",'a')
+        f.write(message)
+        f.write('\n')
+        f.close()
+    except:
+        print "ERROR write to log file"
+    return
+#=====================================================
+def write_ML(pos,temp):
+    try:
+	message = str(pos) + " " + str(temp)
+        f = open("ML.work",'a')
+        f.write(message)
+        f.write('\n')
+        f.close()
+    except:
+        print "ERROR write to ML file"
+    return
+
+#=====================================================
+def init_history():
+    try:
+        f = open("history.work",'w')
+        f.write("===== History =====")
+        f.write('\n')
+        f.close()
+    except:
+        print "ERROR init history file"
+    return
+#=====================================================
+def init_log():
+    try:
+        f = open("log.work",'w')
+        f.write("===== Log =====")
+        f.write('\n')
+        f.close()
+    except:
+        print "ERROR init log file"
+    return
+#=====================================================
+def publishStepperMsg(steps, direction):
+    global g_stepperpos
+    msg = "ORDER steps to move: "+str(steps) + " dir:" + str(direction)
+    write_history(msg)
+    print msg
+    #return
+    if steps > 500: # same limit as stepper device
+        print "Too many steps "+str(steps)
+        return
+    #configuration = ioant.get_configuration()
+    #out_msg = ioant.create_message("RunStepperMotorRaw")
+    #out_msg.direction = direction
+    #out_msg.delay_between_steps = 5
+    #out_msg.number_of_step = steps
+    #out_msg.step_size = out_msg.StepSize.Value("FULL_STEP")
+    #topic = ioant.get_topic_structure()
+    #topic['top'] = 'live'
+    #topic['global'] = configuration["publish_topic"]["stepper"]["global"]
+    #topic['local'] = configuration["publish_topic"]["stepper"]["local"]
+    #topic['client_id'] = configuration["publish_topic"]["stepper"]["client_id"]
+    #topic['stream_index'] = 0
+    #ioant.publish(out_msg, topic)
+#=====================================================
+def init_log():
+    try:
+        f = open("log.work",'w')
+        f.write("===== Log =====")
+        f.write('\n')
+        f.close()
+    except:
+        print "ERROR init log file"
+    return
+    write_position(g_stepperpos)
 #=====================================================
 def heater_model():
 	global g_minsteps,g_maxsteps,g_defsteps
@@ -208,18 +370,146 @@ def heater_model():
 	status = status + " mode " + str(g_mode)
 	print status
 	write_log(status)
-	spacecollapse_op1('kil_kvv32_heatercontrol_status','status', g_state)
-	spacecollapse_op1('kil_kvv32_heatercontrol_mode','mode', g_mode)
-	spacecollapse_op1('kil_kvv32_heatercontrol_position','position', g_current_position)
-	spacecollapse_op1('kil_kvv32_heatercontrol_inertia','inertia', r_inertia)
-	spacecollapse_op1('kil_kvv32_heatercontrol_uptime','uptime', r_uptime)
-	spacecollapse_op1('kil_kvv32_heatercontrol_target','target', y)
-	spacecollapse_op1('kil_kvv32_heatercontrol_steps','steps', steps)
-	spacecollapse_op1('kil_kvv32_heatercontrol_energy','energy', energy)
-	spacecollapse_op1('kil_kvv32_heatercontrol_timeout_indoor','timeout_indoor', timeout_temperature_indoor)
-	spacecollapse_op1('kil_kvv32_heatercontrol_timeout_outdoor','timeout_outdoor', timeout_temperature_outdoor)
-	spacecollapse_op1('kil_kvv32_heatercontrol_timeout_water_in','timeout_water_in', timeout_temperature_water_in)
-	spacecollapse_op1('kil_kvv32_heatercontrol_timeout_water_out','timeout_water_out', timeout_temperature_water_out)
-	spacecollapse_op1('kil_kvv32_heatercontrol_timeout_smoke','timeout_smoke', timeout_temperature_smoke)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_status','status', g_state)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_mode','mode', g_mode)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_position','position', g_current_position)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_inertia','inertia', r_inertia)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_uptime','uptime', r_uptime)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_target','target', y)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_steps','steps', steps)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_energy','energy', energy)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_timeout_indoor','timeout_indoor', timeout_temperature_indoor)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_timeout_outdoor','timeout_outdoor', timeout_temperature_outdoor)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_timeout_water_in','timeout_water_in', timeout_temperature_water_in)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_timeout_water_out','timeout_water_out', timeout_temperature_water_out)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_timeout_smoke','timeout_smoke', timeout_temperature_smoke)
 	return
+#=====================================================
+def getTopicHash(topic):
+    res = topic['top'] + topic['global'] + topic['local'] + topic['client_id'] + str(topic['message_type']) + str(topic['stream_index'])
+    tres = hash(res)
+    tres = tres% 10**8
+    return tres
+
+#=====================================================
+def subscribe_to_topic(par,msgt):
+    configuration = ioant.get_configuration()
+    topic = ioant.get_topic_structure()
+    topic['top'] = 'live'
+    topic['global'] = configuration["subscribe_topic"][par]["global"]
+    topic['local'] = configuration["subscribe_topic"][par]["local"]
+    topic['client_id'] = configuration["subscribe_topic"][par]["client_id"]
+    topic['message_type'] = ioant.get_message_type(msgt)
+    topic['stream_index'] = configuration["subscribe_topic"][par]["stream_index"]
+    print "Subscribe to: " + str(topic)
+    ioant.subscribe(topic)
+    shash = getTopicHash(topic)
+    return shash
+
+#=====================================================
+def setup(configuration):
+    # Configuration
+	global g_minsteps,g_maxsteps,g_defsteps
+	global g_minsmoke
+	global g_mintemp,g_maxtemp
+	global g_minheat,g_maxheat
+	global g_x_0,g_y_0
+	global g_uptime
+	global g_relax
+	global r_inertia
+	global g_current_position
+	global r_uptime
+	global g_state
+	global g_mode
+	global g_inertia
+	global STATE_INIT
+	global STATE_OFF
+	global STATE_WARMING
+	global STATE_ON
+	global MODE_OFFLINE
+	global MODE_ONLINE
+
+	STATE_INIT = 0
+	STATE_OFF = 1
+	STATE_WARMING = 2
+	STATE_ON = 3
+	MODE_OFFLINE = 1
+	MODE_ONLINE = 2
+	g_minsteps = 5
+	g_maxsteps = 30
+	g_defsteps = 10
+	g_minsmoke = 27
+	g_mintemp = -7
+	g_maxtemp = 10
+	g_minheat = 20
+	g_maxheat = 40
+	g_x_0 = 0
+	g_y_0 = 35
+	g_relax = 3.0
+	g_current_position = read_position()
+	global temperature_indoor
+	global temperature_outdoor
+	global temperature_water_in
+	global temperature_water_out
+	global temperature_smoke
+	temperature_indoor    = 999
+	temperature_outdoor   = 999
+	temperature_water_in  = 999
+	temperature_water_out = 999
+	temperature_smoke     = 999
+	global timeout_temperature_indoor
+	global timeout_temperature_outdoor
+	global timeout_temperature_water_in
+	global timeout_temperature_water_out
+	global timeout_temperature_smoke
+	timeout_temperature_indoor = 60
+	timeout_temperature_outdoor = 60
+	timeout_temperature_water_in = 60
+	timeout_temperature_water_out = 60
+	timeout_temperature_smoke = 60
+	#ioant.setup(configuration)
+	#configuration = ioant.get_configuration()
+	g_minsteps = int(configuration["algorithm"]["minsteps"])
+	g_maxsteps = int(configuration["algorithm"]["maxsteps"])
+	g_defsteps = int(configuration["algorithm"]["defsteps"])
+	g_minsmoke = float(configuration["algorithm"]["minsmoke"])
+	g_mintemp = float(configuration["algorithm"]["mintemp"])
+	g_maxtemp = float(configuration["algorithm"]["maxtemp"])
+	g_minheat = float(configuration["algorithm"]["minheat"])
+	g_maxheat = float(configuration["algorithm"]["maxheat"])
+	g_x_0 = float(configuration["algorithm"]["x_0"])
+	g_y_0 = float(configuration["algorithm"]["y_0"])
+	g_uptime = int(configuration["algorithm"]["onofftime"])
+	g_inertia = int(configuration["algorithm"]["inertia"])
+	g_relax = float(configuration["algorithm"]["relax"])
+
+	g_state = STATE_OFF
+	g_mode = MODE_OFFLINE
+	r_inertia = g_inertia
+	r_uptime = g_uptime
+
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_status','status', g_state)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_position','position', g_current_position)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_inertia','inertia', r_inertia)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_uptime','uptime', r_uptime)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_target','target', 0)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_steps','steps', 0)
+	spacecollapse_op1('test_kil_kvv32_heatercontrol_energy','energy', 0)
+
+	init_log()
+	init_history()
+
+#=====================================================
+def loop():
+	global r_inertia
+
+    #ioant.update_loop()
+	# insert delay
+	if r_inertia > 0:
+		r_inertia -= 1
+	
+	heater_model()
+
+#=====================================================
+# End of file
 #=====================================================
