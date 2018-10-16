@@ -5,7 +5,7 @@
 # Description: IOANT heater control algorithm
 # 90 degrees <=> 1152/4 steps = 288
 # =============================================
-#from ioant.sdk import IOAnt
+
 import logging
 import hashlib
 import math
@@ -14,8 +14,22 @@ import urllib2
 import time
 import datetime
 
-#logger = logging.getLogger(__name__)
+#===================================================
+def read_data (row):
+#===================================================
+	global temperature_indoor
+	global temperature_outdoor
+	global temperature_water_in
+	global temperature_water_out
+	global temperature_smoke
 
+	try:
+		f = open("test.work",'r')
+		pos = int(f.read())
+		f.close()
+	except:
+		print("ERRROR Reading test file")
+	
 #===================================================
 def spacecollapse_op1 ( label, typ, value ):
 #===================================================
@@ -66,7 +80,7 @@ def read_position():
         pos = int(f.read())
         f.close()
     except:
-        print("WARNING Create position file")
+        print("WARNING Reading position file")
         f = open("position.work",'w')
         s = str(0)
         f.write(s)
@@ -128,27 +142,14 @@ def init_log():
     return
 #=====================================================
 def publishStepperMsg(steps, direction):
-    global g_stepperpos
-    msg = "ORDER steps to move: "+str(steps) + " dir:" + str(direction)
-    write_history(msg)
-    print msg
-    #return
-    if steps > 500: # same limit as stepper device
-        print "Too many steps "+str(steps)
+	global g_stepperpos
+	msg = "ORDER steps to move: "+str(steps) + " dir:" + str(direction)
+	write_history(msg)
+	print msg
+	
+	if steps > 500: # same limit as stepper device
+		print "Too many steps "+str(steps)
         return
-    #configuration = ioant.get_configuration()
-    #out_msg = ioant.create_message("RunStepperMotorRaw")
-    #out_msg.direction = direction
-    #out_msg.delay_between_steps = 5
-    #out_msg.number_of_step = steps
-    #out_msg.step_size = out_msg.StepSize.Value("FULL_STEP")
-    #topic = ioant.get_topic_structure()
-    #topic['top'] = 'live'
-    #topic['global'] = configuration["publish_topic"]["stepper"]["global"]
-    #topic['local'] = configuration["publish_topic"]["stepper"]["local"]
-    #topic['client_id'] = configuration["publish_topic"]["stepper"]["client_id"]
-    #topic['stream_index'] = 0
-    #ioant.publish(out_msg, topic)
 #=====================================================
 def init_log():
     try:
@@ -384,27 +385,6 @@ def heater_model():
 	spacecollapse_op1('test_kil_kvv32_heatercontrol_timeout_water_out','timeout_water_out', timeout_temperature_water_out)
 	spacecollapse_op1('test_kil_kvv32_heatercontrol_timeout_smoke','timeout_smoke', timeout_temperature_smoke)
 	return
-#=====================================================
-def getTopicHash(topic):
-    res = topic['top'] + topic['global'] + topic['local'] + topic['client_id'] + str(topic['message_type']) + str(topic['stream_index'])
-    tres = hash(res)
-    tres = tres% 10**8
-    return tres
-
-#=====================================================
-def subscribe_to_topic(par,msgt):
-    configuration = ioant.get_configuration()
-    topic = ioant.get_topic_structure()
-    topic['top'] = 'live'
-    topic['global'] = configuration["subscribe_topic"][par]["global"]
-    topic['local'] = configuration["subscribe_topic"][par]["local"]
-    topic['client_id'] = configuration["subscribe_topic"][par]["client_id"]
-    topic['message_type'] = ioant.get_message_type(msgt)
-    topic['stream_index'] = configuration["subscribe_topic"][par]["stream_index"]
-    print "Subscribe to: " + str(topic)
-    ioant.subscribe(topic)
-    shash = getTopicHash(topic)
-    return shash
 
 #=====================================================
 def setup(configuration):
@@ -467,21 +447,20 @@ def setup(configuration):
 	timeout_temperature_water_in = 60
 	timeout_temperature_water_out = 60
 	timeout_temperature_smoke = 60
-	#ioant.setup(configuration)
-	#configuration = ioant.get_configuration()
-	g_minsteps = int(configuration["algorithm"]["minsteps"])
-	g_maxsteps = int(configuration["algorithm"]["maxsteps"])
-	g_defsteps = int(configuration["algorithm"]["defsteps"])
-	g_minsmoke = float(configuration["algorithm"]["minsmoke"])
-	g_mintemp = float(configuration["algorithm"]["mintemp"])
-	g_maxtemp = float(configuration["algorithm"]["maxtemp"])
-	g_minheat = float(configuration["algorithm"]["minheat"])
-	g_maxheat = float(configuration["algorithm"]["maxheat"])
-	g_x_0 = float(configuration["algorithm"]["x_0"])
-	g_y_0 = float(configuration["algorithm"]["y_0"])
-	g_uptime = int(configuration["algorithm"]["onofftime"])
-	g_inertia = int(configuration["algorithm"]["inertia"])
-	g_relax = float(configuration["algorithm"]["relax"])
+
+	g_minsteps = 6
+	g_maxsteps = 40
+	g_defsteps = 30
+	g_minsmoke = 25
+	g_mintemp = -7
+	g_maxtemp = 15
+	g_minheat = 20
+	g_maxheat = 40
+	g_x_0 = 0
+	g_y_0 = 36
+	g_uptime = 3600
+	g_inertia = 480
+	g_relax = 1.5
 
 	g_state = STATE_OFF
 	g_mode = MODE_OFFLINE
@@ -500,14 +479,15 @@ def setup(configuration):
 	init_history()
 
 #=====================================================
-def loop():
-	global r_inertia
+global r_inertia
 
-    #ioant.update_loop()
-	# insert delay
+row = 0
+while(not sleep(3)):
 	if r_inertia > 0:
 		r_inertia -= 1
-	
+		
+	row = row + 1
+	read_data(row)
 	heater_model()
 
 #=====================================================
