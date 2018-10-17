@@ -14,7 +14,40 @@ import urllib2
 import time
 import datetime
 
+g_minsteps = 0
+g_maxsteps = 0
+g_defsteps = 0
+g_minsmoke = 0
+g_mintemp = 0
+g_maxtemp = 0
+g_minheat = 0
+g_maxheat = 0
+g_x_0 = 0
+g_y_0 = 0
+g_relax = 0
 r_inertia = 0
+g_current_position = 0
+r_uptime = 0
+g_state = 0
+g_mode = 0
+g_inertia = 0
+g_uptime = 0
+temperature_indoor = 0
+temperature_outdoor = 0
+temperature_water_in = 0
+temperature_water_out = 0
+temperature_smoke = 0
+timeout_temperature_indoor = 0
+timeout_temperature_outdoor = 0
+timeout_temperature_water_in = 0
+timeout_temperature_water_out = 0
+timeout_temperature_smoke = 0
+STATE_INIT = 0
+STATE_OFF = 0
+STATE_WARMING = 0
+STATE_ON = 0
+MODE_OFFLINE = 0
+MODE_ONLINE = 0
 #===================================================
 def read_data (row):
 #===================================================
