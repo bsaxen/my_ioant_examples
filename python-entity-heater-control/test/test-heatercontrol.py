@@ -436,17 +436,7 @@ def setup(configuration):
 	STATE_ON = 3
 	MODE_OFFLINE = 1
 	MODE_ONLINE = 2
-	g_minsteps = 5
-	g_maxsteps = 30
-	g_defsteps = 10
-	g_minsmoke = 27
-	g_mintemp = -7
-	g_maxtemp = 10
-	g_minheat = 20
-	g_maxheat = 40
-	g_x_0 = 0
-	g_y_0 = 35
-	g_relax = 3.0
+
 	g_current_position = read_position()
 	global temperature_indoor
 	global temperature_outdoor
@@ -469,19 +459,19 @@ def setup(configuration):
 	timeout_temperature_water_out = 60
 	timeout_temperature_smoke = 60
 
-	g_minsteps = 6
+	g_minsteps = 5
 	g_maxsteps = 40
 	g_defsteps = 30
 	g_minsmoke = 25
 	g_mintemp = -7
 	g_maxtemp = 15
-	g_minheat = 20
+	g_minheat = 25
 	g_maxheat = 40
 	g_x_0 = 0
 	g_y_0 = 36
 	g_uptime = 3600
 	g_inertia = 480
-	g_relax = 1.5
+	g_relax = 4
 
 	g_state = STATE_OFF
 	g_mode = MODE_OFFLINE
@@ -518,6 +508,7 @@ while line:
 	temperature_water_in = float(line2[2])
 	temperature_water_out = float(line2[3])
 	temperature_smoke = float(line2[4])
+	print temperature_smoke
 	heater_model()
 	time.sleep(5)
 f.close()
