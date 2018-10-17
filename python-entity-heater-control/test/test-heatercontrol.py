@@ -14,6 +14,7 @@ import urllib2
 import time
 import datetime
 
+r_inertia = 0
 #===================================================
 def read_data (row):
 #===================================================
