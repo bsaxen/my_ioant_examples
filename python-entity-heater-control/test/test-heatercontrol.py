@@ -408,7 +408,7 @@ def heater_model():
 	return
 
 #=====================================================
-def setup(configuration):
+def setup():
     # Configuration
 	global g_minsteps,g_maxsteps,g_defsteps
 	global g_minsmoke
@@ -491,7 +491,7 @@ def setup(configuration):
 
 #=====================================================
 global r_inertia
-
+setup()
 # Open the file with read only permit
 f = open('test.work','r')
 line = f.readline()
