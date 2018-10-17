@@ -493,7 +493,7 @@ def setup(configuration):
 global r_inertia
 
 # Open the file with read only permit
-f = open('my_text_file.txt')
+f = open('test.work','r')
 line = f.readline()
 while line:
 	if r_inertia > 0:
