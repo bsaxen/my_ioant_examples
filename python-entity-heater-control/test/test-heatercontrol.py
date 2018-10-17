@@ -48,31 +48,7 @@ STATE_WARMING = 0
 STATE_ON = 0
 MODE_OFFLINE = 0
 MODE_ONLINE = 0
-#===================================================
-def read_data (row):
-#===================================================
-	global temperature_indoor
-	global temperature_outdoor
-	global temperature_water_in
-	global temperature_water_out
-	global temperature_smoke
 
-	try:
-		with open("test.work",'r') as f:
-			content = f.readlines()
-			line = content[row]
-			print line
-			line2 = line.split(' ')
-			temperature_indoor = float(line2[0])
-			temperature_outdoor = float(line2[1])
-			temperature_water_in = float(line2[2])
-			temperature_water_out = float(line2[3])
-			temperature_smoke = float(line2[4])
-		f.close()
-		
-	except:
-		print("ERRROR Reading test file")
-	
 #===================================================
 def spacecollapse_op1 ( label, typ, value ):
 #===================================================
@@ -533,7 +509,7 @@ while line:
 	if r_inertia > 0:
 		r_inertia -= 1
 	print line
-	print(line)
+	#print(line)
 	line = f.readline()
 	#decode line
 	line2 = line.split(' ')
