@@ -42,6 +42,7 @@ def read_data (row):
 #===================================================
 def spacecollapse_op1 ( label, typ, value ):
 #===================================================
+	return
 	url = 'http://spacecollapse.simuino.com/scServer.php'
 	data = {}
 	data['op'] = 1
@@ -59,6 +60,7 @@ def spacecollapse_op1 ( label, typ, value ):
 #===================================================
 def spacecollapse_op2 ( label, param ):
 #===================================================
+	return
 	url = 'http://spacecollapse.simuino.com/scServer.php'
 	data = {}
 	data['op'] = 2
