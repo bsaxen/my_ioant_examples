@@ -492,15 +492,6 @@ def setup(configuration):
 #=====================================================
 global r_inertia
 
-row = 0
-while(not sleep(3)):
-	if r_inertia > 0:
-		r_inertia -= 1
-		
-	row = row + 1
-	read_data(row)
-	heater_model()
-	
 # Open the file with read only permit
 f = open('my_text_file.txt')
 line = f.readline()
@@ -518,6 +509,7 @@ while line:
 	temperature_water_out = float(line2[3])
 	temperature_smoke = float(line2[4])
 	heater_model()
+	time.sleep(5)
 f.close()
 
 #=====================================================
