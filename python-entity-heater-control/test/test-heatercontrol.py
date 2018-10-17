@@ -498,6 +498,19 @@ while(not sleep(3)):
 	row = row + 1
 	read_data(row)
 	heater_model()
+	
+# Open the file with read only permit
+f = open('my_text_file.txt')
+line = f.readline()
+while line:
+	if r_inertia > 0:
+		r_inertia -= 1
+	print line
+	print(line)
+	line = f.readline()
+	#decode line
+	heater_model()
+f.close()
 
 #=====================================================
 # End of file
