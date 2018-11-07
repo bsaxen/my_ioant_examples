@@ -1,9 +1,11 @@
 # =============================================
 # File: test-heatercontrol.py
 # Author: Benny Saxen
-# Date: 2018-10-16
+# Date: 2018-11-07
 # Description: IOANT heater control algorithm
 # 90 degrees <=> 1152/4 steps = 288
+#
+# Note -  the function heater_model() is the testobject
 # =============================================
 
 import logging
@@ -170,6 +172,11 @@ def publishStepperMsg(steps, direction):
 	
 	if steps > 500: # same limit as stepper device
 		print "Too many steps "+str(steps)
+        return
+#=====================================================
+def publishEnergyMsg(value):
+	msg = "Energy is "+str(value)
+	print msg
         return
 #=====================================================
 def init_log():
@@ -379,7 +386,7 @@ def heater_model():
 				go = 0
 
 			if go == 1 :
-				#publishStepperMsg(steps, direction)
+				publishStepperMsg(steps, direction)
 				print "Move Stepper " + str(steps) + " " + str(direction)
 				r_inertia = g_inertia
 				if direction == COUNTERCLOCKWISE:
@@ -387,6 +394,7 @@ def heater_model():
 				if direction == CLOCKWISE:
 					g_current_position -= steps
 #========================================================================
+	publishEnergyMsg(value)
 	status = str(r_uptime) + " state " + str(g_state) + " target=" + str(y) + "("+str(temperature_water_out)+")" + " Energy " + str(energy) + " countdown " + str(r_inertia) + " steps " + str(steps)
 	status = status + "Pos=" + str(g_current_position) + " indoor " + str(timeout_temperature_indoor) + " outdoor " + str(timeout_temperature_outdoor)
 	status = status + " mode " + str(g_mode)
