@@ -498,7 +498,7 @@ def setup():
 	init_history()
 
 #=====================================================
-global r_inertia
+
 setup()
 # Open the file with read only permit
 f = open('test.work','r')
