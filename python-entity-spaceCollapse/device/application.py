@@ -1,8 +1,8 @@
 # =============================================
-# File: spacecollapse
+# File: GOW
 # Author: Benny Saxen
-# Date: 2018-05-03
-# Description: Bridge Ioant and Spacecollapse
+# Date: 2019-01-20
+# Description: Bridge Ioant and GOW
 #              Publish and action
 # =============================================
 from ioant.sdk import IOAnt
@@ -48,16 +48,48 @@ def subscribe_to_topic():
     print "Subscribe to all topics: " + str(topic)
     ioant.subscribe(topic)
     return
-
+#===================================================
+def publishData( itopic, ipayload, n, iperiod, ihw ):
+#===================================================
+	url = conf_gs_url
+	server = 'gowServer.php'
+	data = {}
+	# meta data
+	data['do']     = 'data'
+	data['topic']  = itopic
+	data['no']     = n
+	data['wrap']   = conf_wrap
+	data['ts']     = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	data['period'] = iperiod
+	data['url']    = url
+	data['hw']     = ihw
+	data['hash']   = 'nohash'
+	# payload
+	data['payload'] = ipayload
+	
+	values = urllib.urlencode(data)
+	req = 'http://' + url + '/' + server + '?' + values
+	print req
+	try: 
+		response = urllib2.urlopen(req)
+		the_page = response.read()
+		print 'Message to ' + itopic + ': ' + the_page
+		evaluateAction(the_page)
+	except urllib2.URLError as e:
+		print e.reason
+#===================================================        
 def setup(configuration):
+#===================================================
     """ setup function """
     ioant.setup(configuration)
-
+#===================================================
 def loop():
+#===================================================
     """ Loop function """
     ioant.update_loop()
-
+#===================================================
 def on_message(topic, message):
+#===================================================
     print "message received - publish to Space Collapse Server"
     print topic['message_type']
     print topic
@@ -67,25 +99,17 @@ def on_message(topic, message):
     ok = 0
     if(topic['message_type'] == 4): # temperature
        unit = "celcius"
+       value = message.value
        ok = 1 
+    
     if(topic['message_type'] == 8): # electric power
        unit = "watt"
+       value = message.value
        ok = 1
+    
     if ok == 1:
-       scUrl = "http://spacecollapse.simuino.com/scServer.php?"
-       scUrl = scUrl + "type=" + msg_type_string
-       scUrl = scUrl + "&label=" + topic["global"]+'_'+topic["local"]+'_'+topic["client_id"]+'_'+str(topic["stream_index"])
-       scUrl = scUrl + "&value=" + "{0:.2f}".format(message.value)
-       scUrl = scUrl + "&unit=" + unit
-       scUrl = scUrl + "&datetime=" + datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
-       #scUrl = scUrl + "&description=" +
-       #%22This%20is%20a%20measurement%20in%20my%20house%22"
-       print scUrl
-       r = requests.get(scUrl)
-       print r.text
-       #publish_ioant_message(r.text)
-       print r.content
-
+       payload = '{ "value": "' + str(value) + '", "unit": "' + str(unit) + '"}'
+       publishData(topic3, payload , n, conf_period, conf_hw)
 
 def on_connect():
     """ On connect function. Called when connected to broker """
